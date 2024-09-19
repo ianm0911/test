@@ -1,0 +1,32 @@
+.b {
+  width: 100px;
+  height: 100px;
+  color: #fff;
+  border-radius: 30%;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  outline: none;
+  text-align: center;
+  font-size: 1rem;
+  -webkit-animation: b 3s infinite alternate;
+}
+.b:hover{
+  background: red;
+  background:radial-gradient(circle,green 0%,blue 100%);
+}
+
+
+
+@-webkit-keyframes b {
+  0%{
+    transform: rotateY(0deg);
+  }
+  50%{
+    transform: rotateY(360deg);
+  }
+  100%{
+    transform: rotateY(0deg);
+  }
+}
