@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Model Viewer with Buttons</title>
+  <title>3D Model Viewer with Animated Rotation</title>
   <style>
     body { margin: 0; }
     canvas { display: block; }
@@ -24,15 +24,18 @@
 
   <!-- 버튼 컨트롤 -->
   <div id="controls">
-    <button id="rotateX">Rotate X</button>
-    <button id="rotateY">Rotate Y</button>
-    <button id="rotateZ">Rotate Z</button>
-    <button id="randomRotate">Random Rotate</button>
+    <button id="rotateFront">Front</button>
+    <button id="rotateBack">Back</button>
+    <button id="rotateLeft">Left</button>
+    <button id="rotateRight">Right</button>
+    <button id="rotateTop">Top</button>
+    <button id="rotateBottom">Bottom</button>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script>
     // Scene, Camera, and Renderer setup
     const scene = new THREE.Scene();
@@ -75,25 +78,42 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Button click handlers
-    document.getElementById("rotateX").addEventListener("click", () => {
-      if (model) model.rotation.x += Math.PI / 4; // X축으로 45도 회전
-    });
-
-    document.getElementById("rotateY").addEventListener("click", () => {
-      if (model) model.rotation.y += Math.PI / 4; // Y축으로 45도 회전
-    });
-
-    document.getElementById("rotateZ").addEventListener("click", () => {
-      if (model) model.rotation.z += Math.PI / 4; // Z축으로 45도 회전
-    });
-
-    document.getElementById("randomRotate").addEventListener("click", () => {
+    // Rotate model to specific angles
+    function rotateModelTo(x, y, z) {
       if (model) {
-        model.rotation.x = Math.random() * Math.PI * 2; // X축 랜덤 회전
-        model.rotation.y = Math.random() * Math.PI * 2; // Y축 랜덤 회전
-        model.rotation.z = Math.random() * Math.PI * 2; // Z축 랜덤 회전
+        gsap.to(model.rotation, {
+          x: x,
+          y: y,
+          z: z,
+          duration: 1, // 애니메이션 지속 시간 (초)
+          ease: "power1.inOut", // 부드러운 애니메이션
+        });
       }
+    }
+
+    // Button click handlers
+    document.getElementById("rotateFront").addEventListener("click", () => {
+      rotateModelTo(0, 0, 0); // 앞면 (정면)
+    });
+
+    document.getElementById("rotateBack").addEventListener("click", () => {
+      rotateModelTo(0, Math.PI, 0); // 뒷면
+    });
+
+    document.getElementById("rotateLeft").addEventListener("click", () => {
+      rotateModelTo(0, -Math.PI / 2, 0); // 왼쪽면
+    });
+
+    document.getElementById("rotateRight").addEventListener("click", () => {
+      rotateModelTo(0, Math.PI / 2, 0); // 오른쪽면
+    });
+
+    document.getElementById("rotateTop").addEventListener("click", () => {
+      rotateModelTo(-Math.PI / 2, 0, 0); // 윗면
+    });
+
+    document.getElementById("rotateBottom").addEventListener("click", () => {
+      rotateModelTo(Math.PI / 2, 0, 0); // 아랫면
     });
 
     // Animation loop
@@ -107,5 +127,4 @@
 
 </body>
 </html>
-
 
