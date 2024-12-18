@@ -116,6 +116,15 @@
       rotateModelTo(Math.PI / 2, 0, 0); // 아랫면
     });
 
+    function rotateToRandomFace() {
+  rotateModelTo(
+    Math.random() * Math.PI * 2,
+    Math.random() * Math.PI * 2,
+    Math.random() * Math.PI * 2
+  );
+}
+
+
     // Animation loop
     function animate() {
       requestAnimationFrame(animate);
