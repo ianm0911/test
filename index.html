@@ -22,11 +22,10 @@
     document.body.appendChild(renderer.domElement);
 
     // Lighting
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(-1, -1, -1).normalize();
+    const light = new THREE.ambientLight(0xffffff, 1);
+    //light.position.set(1, 1, 1).normalize();
     scene.add(light);
-    light.position.set(1, 1, 1).normalize();
-    scene.add(light);
+    
 
     // Load glTF model
     const loader = new THREE.GLTFLoader();
