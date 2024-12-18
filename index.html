@@ -27,7 +27,7 @@
 
     // Load glTF model
     const loader = new THREE.GLTFLoader();
-    loader.load("model/cup.glb", function (gltf) {
+    loader.load("model/dies.glb", function (gltf) {
       scene.add(gltf.scene);
       renderer.render(scene, camera);
     }, undefined, function (error) {
