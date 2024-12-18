@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Model Viewer with Animated Rotation</title>
+  <title>3D Model Viewer - Random Rotation</title>
   <style>
     body { margin: 0; }
     canvas { display: block; }
@@ -24,12 +24,7 @@
 
   <!-- 버튼 컨트롤 -->
   <div id="controls">
-    <button id="rotateFront">Front</button>
-    <button id="rotateBack">Back</button>
-    <button id="rotateLeft">Left</button>
-    <button id="rotateRight">Right</button>
-    <button id="rotateTop">Top</button>
-    <button id="rotateBottom">Bottom</button>
+    <button id="randomRotate">Random Face to Camera</button>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -47,9 +42,6 @@
     // Lighting
     const light = new THREE.AmbientLight(0xffffff, 1);
     scene.add(light);
-
-    // OrbitControls
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
     let model; // 모델 참조를 저장할 변수
 
@@ -69,7 +61,9 @@
       }
     );
 
-    camera.position.z = 5;
+    // 카메라 정면 고정
+    camera.position.set(0, 0, 5);
+    camera.lookAt(0, 0, 0);
 
     // Resize handling
     window.addEventListener("resize", () => {
@@ -78,57 +72,52 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Rotate model to specific angles
-    function rotateModelTo(x, y, z) {
-      if (model) {
-        gsap.to(model.rotation, {
-          x: x,
-          y: y,
-          z: z,
-          duration: 1, // 애니메이션 지속 시간 (초)
-          ease: "power1.inOut", // 부드러운 애니메이션
+    // 랜덤 회전 + 정렬
+    function randomRotateToFace() {
+      if (!model) return;
+
+      // 랜덤한 회전 생성
+      const randomX = Math.random() * Math.PI * 2;
+      const randomY = Math.random() * Math.PI * 2;
+      const randomZ = Math.random() * Math.PI * 2;
+
+      // 최종 정렬될 특정 면
+      const targetFace = [
+        { x: 0, y: 0, z: 0 },                 // Front
+        { x: 0, y: Math.PI, z: 0 },           // Back
+        { x: 0, y: -Math.PI / 2, z: 0 },      // Left
+        { x: 0, y: Math.PI / 2, z: 0 },       // Right
+        { x: -Math.PI / 2, y: 0, z: 0 },      // Top
+        { x: Math.PI / 2, y: 0, z: 0 }        // Bottom
+      ];
+
+      const randomIndex = Math.floor(Math.random() * targetFace.length);
+      const finalFace = targetFace[randomIndex];
+
+      // 애니메이션 설정 (랜덤 회전 -> 최종 정렬)
+      gsap.timeline()
+        .to(model.rotation, {
+          x: randomX,
+          y: randomY,
+          z: randomZ,
+          duration: 1, // 랜덤 회전 지속 시간
+          ease: "power2.inOut"
+        })
+        .to(model.rotation, {
+          x: finalFace.x,
+          y: finalFace.y,
+          z: finalFace.z,
+          duration: 1, // 최종 정렬 지속 시간
+          ease: "power2.inOut"
         });
-      }
     }
 
-    // Button click handlers
-    document.getElementById("rotateFront").addEventListener("click", () => {
-      rotateModelTo(0, 0, 0); // 앞면 (정면)
-    });
-
-    document.getElementById("rotateBack").addEventListener("click", () => {
-      rotateModelTo(0, Math.PI, 0); // 뒷면
-    });
-
-    document.getElementById("rotateLeft").addEventListener("click", () => {
-      rotateModelTo(0, -Math.PI / 2, 0); // 왼쪽면
-    });
-
-    document.getElementById("rotateRight").addEventListener("click", () => {
-      rotateModelTo(0, Math.PI / 2, 0); // 오른쪽면
-    });
-
-    document.getElementById("rotateTop").addEventListener("click", () => {
-      rotateModelTo(-Math.PI / 2, 0, 0); // 윗면
-    });
-
-    document.getElementById("rotateBottom").addEventListener("click", () => {
-      rotateModelTo(Math.PI / 2, 0, 0); // 아랫면
-    });
-
-    function rotateToRandomFace() {
-  rotateModelTo(
-    Math.random() * Math.PI * 2,
-    Math.random() * Math.PI * 2,
-    Math.random() * Math.PI * 2
-  );
-}
-
+    // 버튼 클릭 핸들러
+    document.getElementById("randomRotate").addEventListener("click", randomRotateToFace);
 
     // Animation loop
     function animate() {
       requestAnimationFrame(animate);
-      controls.update(); // OrbitControls 업데이트
       renderer.render(scene, camera);
     }
     animate();
@@ -136,4 +125,3 @@
 
 </body>
 </html>
-
