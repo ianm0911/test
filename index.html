@@ -134,5 +134,90 @@ animate();
 
   </script>
 
+  <script>
+  // 복제된 모델들을 관리하기 위한 배열
+  const clonedModels = [];
+  const cloneSpacing = 1.5; // 복제된 모델 간 간격
+  const initialClonePosition = { x: -5, y: -3, z: 0 }; // 복제된 모델 시작 위치
+  const cloneScale = 0.3; // 복제된 모델 크기
+
+  // 랜덤 회전 + 정렬
+  function randomRotateToFace() {
+    if (!model) return;
+
+    // 버튼 비활성화
+    button.disabled = true;
+
+    // 랜덤한 회전 생성
+    const randomX = 100 + Math.random() * Math.PI * 3;
+    const randomY = 100 + Math.random() * Math.PI * 3;
+    const randomZ = 100 + Math.random() * Math.PI * 3;
+
+    // 최종 정렬될 특정 면
+    const targetFace = [
+      { x: 0, y: 0, z: 0 },                 // Front
+      { x: 0, y: Math.PI, z: 0 },           // Back
+      { x: 0, y: -Math.PI / 2, z: 0 },      // Left
+      { x: 0, y: Math.PI / 2, z: 0 },       // Right
+      { x: -Math.PI / 2, y: 0, z: 0 },      // Top
+      { x: Math.PI / 2, y: 0, z: 0 }        // Bottom
+    ];
+
+    const randomIndex = Math.floor(Math.random() * targetFace.length);
+    const finalFace = targetFace[randomIndex];
+
+    // 애니메이션 설정 (랜덤 회전 -> 최종 정렬)
+    gsap.timeline()
+      .to(model.rotation, {
+        x: randomX,
+        y: randomY,
+        z: randomZ,
+        duration: 1, // 랜덤 회전 지속 시간
+        ease: "power2.inOut"
+      })
+      .to(model.rotation, {
+        x: finalFace.x,
+        y: finalFace.y,
+        z: finalFace.z,
+        duration: 0.1, // 최종 정렬 지속 시간
+        ease: "power2.inOut"
+      })
+      .eventCallback("onComplete", () => {
+        // 애니메이션 완료 시 버튼 다시 활성화
+        button.disabled = false;
+
+        // 복제된 모델 추가
+        addClone(finalFace);
+      });
+  }
+
+  // 복제된 모델 추가 함수
+  function addClone(rotation) {
+    if (!model) return;
+
+    // 모델 복제
+    const clone = model.clone();
+    clone.scale.set(cloneScale, cloneScale, cloneScale); // 작은 크기로 설정
+
+    // 복제된 모델의 위치 계산
+    const cloneCount = clonedModels.length;
+    const offsetX = (cloneCount % 5) * cloneSpacing; // x축 위치 (최대 5개씩 한 줄에 배치)
+    const offsetY = -Math.floor(cloneCount / 5) * cloneSpacing; // y축 위치
+    clone.position.set(
+      initialClonePosition.x + offsetX,
+      initialClonePosition.y + offsetY,
+      initialClonePosition.z
+    );
+
+    // 복제된 모델의 회전 설정
+    clone.rotation.set(rotation.x, rotation.y, rotation.z);
+
+    // 씬에 추가 및 배열에 저장
+    scene.add(clone);
+    clonedModels.push(clone);
+  }
+</script>
+
+
 </body>
 </html>
