@@ -208,6 +208,20 @@
       renderer.render(scene, camera);
     }
     animate();
+
+
+
+
+    // 스페이스바 키 코드
+const SPACEBAR_KEY_CODE = 32;
+
+// 키보드 이벤트 리스너 추가
+window.addEventListener("keydown", (event) => {
+  if (event.keyCode === SPACEBAR_KEY_CODE) {
+    randomRotateToFace();
+  }
+});
+
   </script>
 </body>
 </html>
